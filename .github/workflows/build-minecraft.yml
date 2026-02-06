@@ -1,0 +1,128 @@
+name: Multi-Arch Parallel Build (Minecraft)
+
+on:
+    push:
+        branches: ["main", "master"]
+        paths:
+            - "@minecraft-server/**"
+            - ".github/workflows/build-minecraft.yml"
+    workflow_dispatch:
+
+env:
+    REGISTRY: ghcr.io
+    # 注意：如果 github.repository_owner 包含大写字母，这里会直接导致后续 Docker 报错。
+    # 只要你是全小写用户名，这就没问题。
+    FULL_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/minecraft-server-v
+    PACKAGE_SHORT_NAME: minecraft-server-v
+
+jobs:
+    # Job 1: 构建 amd64
+    build-amd64:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            # 【调试步骤】报错说找不到文件？我们列出来看看
+            - name: Debug - List files
+              run: |
+                  echo "当前工作目录:"
+                  pwd
+                  echo "查看 @minecraft-server 目录下有什么:"
+                  ls -la ./@minecraft-server || echo "目录不存在！"
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push (amd64)
+              uses: docker/build-push-action@v5
+              with:
+                  # context 指定为子目录
+                  context: ./@minecraft-server
+                  # 显式指定 Dockerfile 位置，双重保险
+                  file: ./@minecraft-server/Dockerfile
+                  platforms: linux/amd64
+                  push: true
+                  # 直接使用全局 env
+                  tags: ${{ env.FULL_IMAGE_NAME }}:latest-amd64
+                  provenance: false
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+
+    # Job 2: 构建 arm64
+    build-arm64:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push (arm64)
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./@minecraft-server
+                  file: ./@minecraft-server/Dockerfile
+                  platforms: linux/arm64
+                  push: true
+                  tags: ${{ env.FULL_IMAGE_NAME }}:latest-arm64
+                  provenance: false
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+
+    # Job 3: 合并与清理
+    merge-manifest:
+        runs-on: ubuntu-latest
+        needs: [build-amd64, build-arm64]
+        permissions:
+            packages: write
+        steps:
+            - name: Login to GHCR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create and push manifest list
+              run: |
+                  TARGET_IMAGE="${{ env.FULL_IMAGE_NAME }}:latest"
+                  AMD64_IMAGE="${{ env.FULL_IMAGE_NAME }}:latest-amd64"
+                  ARM64_IMAGE="${{ env.FULL_IMAGE_NAME }}:latest-arm64"
+
+                  docker manifest create ${TARGET_IMAGE} ${AMD64_IMAGE} ${ARM64_IMAGE}
+                  docker manifest annotate ${TARGET_IMAGE} ${ARM64_IMAGE} --os linux --arch arm64
+                  docker manifest annotate ${TARGET_IMAGE} ${AMD64_IMAGE} --os linux --arch amd64
+                  docker manifest push ${TARGET_IMAGE}
+
+            - name: Delete untagged images
+              uses: actions/delete-package-versions@v5
+              with:
+                  package-name: ${{ env.PACKAGE_SHORT_NAME }}
+                  package-type: "container"
+                  min-versions-to-keep: 0
+                  delete-only-untagged-versions: "true"

@@ -1,0 +1,24 @@
+["JRE_25"]
+publisher = "Temurin"
+version = "25.0.2+10"
+amd64.sha256 = "d6c89e08f42be94cd55eab20190958a35b993625018a3ac59cb3d16d8445cf98"
+arm64.sha256 = "e90ad4a618a0228a2126e7c6abfbc0729e2649d7d72cef45fd640239866eb050"
+
+["JRE_21"]
+publisher = "Temurin"
+version = "21.0.10+7"
+amd64.sha256 = "991be6ac6725e76109ecbd131d658f992dcbeacba3a8b4b6650302c8012b52fb"
+arm64.sha256 = "3ca84da7c4f57eee8d7e7f0645dc904a3a06456d32b37a4dd57a5e7527245250"
+
+["JRE_17"]
+publisher = "Temurin"
+version = "17.0.18+8"
+amd64.sha256 = "8b418e38cca87945858ae911988401720095eb671357d47437b4adb49c28dcab"
+arm64.sha256 = "88727c16610d118c0e739f62e6c99dc1cb5a7b4a93a27054fe2a3aa7150e7b5d"
+
+["JRE_8"]
+publisher = "Temurin"
+amd64.url = "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u482-b08/OpenJDK8U-jre_x64_linux_hotspot_8u482b08.tar.gz"
+amd64.sha256 = "01672ca52509f4cb1ffa8aed905808fed7b984f3e279cb13d90a6e865ff6199f"
+arm64.rul = "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u482-b08/OpenJDK8U-jre_aarch64_linux_hotspot_8u482b08.tar.gz"
+arm64.sha256 = "46496dfa7e58784adf96a3a2bd1ac8be9fda2d8749a9c52bf74fb582aa1449e2"

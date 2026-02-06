@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+# 检查必要的环境变量是否已定义
+if [ -z "${JAVA_VERSION}" ]; then
+    echo "Error: Environment variable JAVA_VERSION is not set."
+    exit 1
+fi
+
+TARGET_JAVA_HOME="/opt/runtime/jre-${JAVA_VERSION}"
+TARGET_JAVA_BIN="${TARGET_JAVA_HOME}/bin/java"
+
+# 1. 检查 JAVA_HOME 目录是否存在
+if [ ! -d "${TARGET_JAVA_HOME}" ]; then
+    echo "Error: JAVA_HOME directory not found at: ${TARGET_JAVA_HOME}"
+    exit 1
+fi
+
+# 2. 检查 Java 二进制文件是否存在且具有执行权限
+if [ ! -x "${TARGET_JAVA_BIN}" ]; then
+    echo "Error: Java executable not found or not executable at: ${TARGET_JAVA_BIN}"
+    exit 1
+fi
+
+# 3. 如果检查通过，设置环境变量
+export JAVA_HOME="${TARGET_JAVA_HOME}"
+export PATH="${JAVA_HOME}/bin:$PATH"
+
+# 4. 切换目录并运行应用
+WORKDIR="/app"
+if [ ! -d "${WORKDIR}" ]; then
+    echo "Error: Working directory ${WORKDIR} does not exist."
+    exit 1
+fi
+
+cd "${WORKDIR}"
+
+exec "$@"
