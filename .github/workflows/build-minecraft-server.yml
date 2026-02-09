@@ -9,11 +9,11 @@ on:
     workflow_dispatch:
 
 env:
-    REGISTRY: ${{ vars.DOCKER_REGISTRY || 'ghrc.io'}}
+    REGISTRY: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}
     REGISTRY_TOKEN: ${{ secrets.PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
     # 注意：如果 github.repository_owner 包含大写字母，这里会直接导致后续 Docker 报错。
     # 只要你是全小写用户名，这就没问题。
-    FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY || 'ghrc.io'}}/${{ github.repository_owner }}/minecraft-server
+    FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}/${{ github.repository_owner }}/minecraft-server
     PACKAGE_SHORT_NAME: minecraft-server
 
 jobs:
