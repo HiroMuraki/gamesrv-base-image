@@ -11,8 +11,9 @@ on:
 env:
     REGISTRY: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}
     REGISTRY_TOKEN: ${{ secrets.PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
+    DOCKER_MIRROR: ${{ vars.DOCKER_MIRROR || 'https://docker.io' }}
     # 注意：如果 github.repository_owner 包含大写字母，这里会直接导致后续 Docker 报错。
-    # 只要你是全小写用户名，这就没问题。
+    # 只要全小写用户（组织）名，这就没问题。
     FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}/${{ github.repository_owner }}/minecraft-server
     PACKAGE_SHORT_NAME: minecraft-server
 
@@ -30,10 +31,9 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
               with:
-                # 显式配置 Buildkit 使用国内镜像源
-                buildkitd-config-inline: |
-                  [registry."docker.io"]
-                    mirrors = ["https://docker.1ms.run"]
+                  buildkitd-config-inline: |
+                      [registry."docker.io"]
+                        mirrors = ["${{ env.DOCKER_MIRROR }}"]
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
@@ -69,10 +69,9 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
               with:
-                # 显式配置 Buildkit 使用国内镜像源
-                buildkitd-config-inline: |
-                  [registry."docker.io"]
-                    mirrors = ["https://docker.1ms.run"]
+                  buildkitd-config-inline: |
+                      [registry."docker.io"]
+                        mirrors = ["${{ env.DOCKER_MIRROR }}"]
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
