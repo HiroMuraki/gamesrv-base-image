@@ -4,6 +4,6 @@ mirrors = ["https://docker.1ms.run"]
 # [registry."git.service.home"]
 # ca = ["/etc/buildkit/certs/server.crt"]
 
-[registry."server:3000"]
-http = true
+# [registry."server:3000"]
+# http = true
 # insecure = true
