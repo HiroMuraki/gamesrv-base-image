@@ -40,6 +40,10 @@ jobs:
                           http = true
                           insecure = true
 
+                      [registry."172.18.12.99"]
+                          http = true
+                          insecure = true
+
             - name: Login to Docker Registry
               uses: docker/login-action@v3
               with:
