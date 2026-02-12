@@ -31,12 +31,12 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
               with:
-                #   buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
-                buildkitd-config-inline: |
-                    [registry."docker.io"]
+                  #   buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
+                  buildkitd-config-inline: |
+                      [registry."docker.io"]
                         mirrors = ["https://docker.1ms.run"]
 
-                    [registry."git.service.home"]
+                      [registry."git.service.home"]
                         http = true
                         insecure = true
 
