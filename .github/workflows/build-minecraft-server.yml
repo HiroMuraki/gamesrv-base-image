@@ -40,7 +40,7 @@ jobs:
                           http = true
                           insecure = true
 
-                      [registry."172.18.12.99"]
+                      [registry."172.18.12.99:3000"]
                           http = true
                           insecure = true
 
