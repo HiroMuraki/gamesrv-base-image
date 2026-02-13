@@ -24,12 +24,15 @@ jobs:
         permissions:
             contents: read
         steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
             - name: Build Custom BuildKit Image
               run: |
                   docker build \
                   -f .github/buildkit/Dockerfile \
                   -t local/custom-buildkit:latest \
-                  ...
+                  .
 
     # Job 1: 构建 amd64
     build-amd64:
