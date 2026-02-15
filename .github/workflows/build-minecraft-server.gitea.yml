@@ -1,4 +1,4 @@
-name: Multi-Arch Parallel Build (Minecraft)
+name: Build Minecraft Server Image (Gitea)
 
 on:
     push:
@@ -10,12 +10,8 @@ on:
 
 env:
     PACKAGE_SHORT_NAME: minecraft-server
-    REGISTRY: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}
-    REGISTRY_TOKEN: ${{ secrets.PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
-    BUILDKITD_CONFIG_FILE: .github/${{ vars.BUILDKITD_CONFIG_FILE || 'buildkitd.toml' }}
-    # 注意：如果 github.repository_owner 包含大写字母，这里会直接导致后续 Docker 报错。
-    # 只要全小写用户（组织）名，这就没问题。
-    FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}/${{ github.repository_owner }}/minecraft-server
+    BUILDKITD_CONFIG_FILE: .github/buildkitd.gitea.toml
+    FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY }}/${{ github.repository_owner }}/minecraft-server
 
 jobs:
     # Job 0: 环境检查，该 Action 只用于非 Github （如 Gitea）
@@ -40,14 +36,16 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
               with:
+                  driver-opts: |
+                      network=gitea_net
                   buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
               with:
-                  registry: ${{ env.REGISTRY }}
+                  registry: ${{ vars.DOCKER_REGISTRY }}
                   username: ${{ github.actor }}
-                  password: ${{ env.REGISTRY_TOKEN }}
+                  password: ${{ secrets.PACKAGES_TOKEN }}
 
             - name: Build and push (amd64)
               uses: docker/build-push-action@v5
@@ -77,14 +75,16 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
               with:
+                  driver-opts: |
+                      network=gitea_net
                   buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
               with:
-                  registry: ${{ env.REGISTRY }}
+                  registry: ${{ vars.DOCKER_REGISTRY }}
                   username: ${{ github.actor }}
-                  password: ${{ env.REGISTRY_TOKEN }}
+                  password: ${{ secrets.PACKAGES_TOKEN }}
 
             - name: Build and push (arm64)
               uses: docker/build-push-action@v5
@@ -110,14 +110,16 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
               with:
+                  driver-opts: |
+                      network=gitea_net
                   buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
               with:
-                  registry: ${{ env.REGISTRY }}
+                  registry: ${{ vars.DOCKER_REGISTRY }}
                   username: ${{ github.actor }}
-                  password: ${{ env.REGISTRY_TOKEN }}
+                  password: ${{ secrets.PACKAGES_TOKEN }}
 
             - name: Create and push manifest list
               run: |
