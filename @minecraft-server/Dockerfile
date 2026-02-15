@@ -11,10 +11,7 @@ ARG DEFAULT_PGID=1000
 ENV TZ=Asia/Shanghai
 ENV JAVA_VERSION=25
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update &&\
-    apt-get install -y \
+RUN apt update && apt install -y \
     gosu \
     ca-certificates
 
