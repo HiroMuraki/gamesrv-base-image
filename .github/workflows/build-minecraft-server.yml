@@ -18,8 +18,16 @@ env:
     FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY || 'ghcr.io'}}/${{ github.repository_owner }}/minecraft-server
 
 jobs:
+    # Job 0: 环境检查，该 Action 只用于 GitHub
+    check-env:
+        if: github.server_url == 'https://github.com'
+        runs-on: ubuntu-latest
+        steps:
+            - run: Continuing action on GitHub
+
     # Job 1: 构建 amd64
     build-amd64:
+        needs: [check-env]
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -53,6 +61,7 @@ jobs:
 
     # Job 2: 构建 arm64
     build-arm64:
+        needs: [check-env]
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -86,7 +95,7 @@ jobs:
                   provenance: false
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
-                  
+
     # Job 3: 合并与清理
     merge-manifest:
         runs-on: ubuntu-latest
