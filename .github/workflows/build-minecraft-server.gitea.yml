@@ -15,16 +15,12 @@ env:
 
 jobs:
     # Job 0: 环境检查，该 Action 只用于非 Github （如 Gitea）
-    check-env:
-        if: github.server_url != 'https://github.com'
-        runs-on: ubuntu-latest
-        steps:
-            - name: Check Environment
-              run:
+    gatekeeper:
+        uses: ./.github/workflows/guard-gitea.yml
 
     # Job 1: 构建 amd64
     build-amd64:
-        needs: [check-env]
+        needs: [gatekeeper]
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -60,7 +56,7 @@ jobs:
 
     # Job 2: 构建 arm64
     build-arm64:
-        needs: [check-env]
+        needs: [gatekeeper]
         runs-on: ubuntu-latest
         permissions:
             contents: read

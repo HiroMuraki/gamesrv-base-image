@@ -1,0 +1,11 @@
+name: Guard for GitHub
+
+on:
+    workflow_call:
+
+jobs:
+    check:
+        if: github.server_url == 'https://github.com'
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo Action runs on GitHub
