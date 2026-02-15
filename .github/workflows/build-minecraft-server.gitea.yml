@@ -9,12 +9,10 @@ on:
     workflow_dispatch:
 
 env:
-    PACKAGE_SHORT_NAME: minecraft-server
-    BUILDKITD_CONFIG_FILE: .github/buildkitd.gitea.toml
     FULL_IMAGE_NAME: ${{ vars.DOCKER_REGISTRY }}/${{ github.repository_owner }}/minecraft-server
 
 jobs:
-    # Job 0: 环境检查，该 Action 只用于非 Github （如 Gitea）
+    # Job 0: 环境检查
     gatekeeper:
         uses: ./.github/workflows/guard-gitea.yml
 
@@ -34,7 +32,7 @@ jobs:
               with:
                   driver-opts: |
                       network=gitea_net
-                  buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
+                  buildkitd-config: .github/buildkitd.gitea.toml
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
@@ -73,7 +71,7 @@ jobs:
               with:
                   driver-opts: |
                       network=gitea_net
-                  buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
+                  buildkitd-config: .github/buildkitd.gitea.toml
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3
@@ -108,7 +106,7 @@ jobs:
               with:
                   driver-opts: |
                       network=gitea_net
-                  buildkitd-config: ${{ env.BUILDKITD_CONFIG_FILE }}
+                  buildkitd-config: .github/buildkitd.gitea.toml
 
             - name: Login to Docker Registry
               uses: docker/login-action@v3

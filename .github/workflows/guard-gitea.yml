@@ -1,11 +1,12 @@
-name: Guard for Non-GitHub
+name: Guard for Gitea
 
 on:
     workflow_call:
 
 jobs:
-    check:
+    check-env:
         if: github.server_url != 'https://github.com'
         runs-on: ubuntu-latest
         steps:
-            - run: echo Action runs on Gitea
+            - name: Environment Check
+              run: echo Action runs on Gitea

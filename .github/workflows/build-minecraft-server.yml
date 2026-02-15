@@ -14,7 +14,7 @@ env:
     FULL_IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/minecraft-server
 
 jobs:
-    # Job 0: 环境检查，该 Action 只用于 GitHub
+    # Job 0: 环境检查
     gatekeeper:
         uses: ./.github/workflows/guard-github.yml
 
