@@ -48,8 +48,6 @@ jobs:
                   push: true
                   tags: ${{ env.FULL_IMAGE_NAME }}:latest-amd64
                   provenance: false
-                  cache-from: type=registry,ref=${{ env.FULL_IMAGE_NAME }}:buildcache-amd64
-                  cache-to: type=registry,ref=${{ env.FULL_IMAGE_NAME }}:buildcache-amd64,mode=max
 
     # Job 2: 构建 arm64
     build-arm64:
@@ -84,8 +82,6 @@ jobs:
                   push: true
                   tags: ${{ env.FULL_IMAGE_NAME }}:latest-arm64
                   provenance: false
-                  cache-from: type=registry,ref=${{ env.FULL_IMAGE_NAME }}:buildcache-arm64
-                  cache-to: type=registry,ref=${{ env.FULL_IMAGE_NAME }}:buildcache-arm64,mode=max
 
     # Job 3: 合并与清理
     merge-manifest:
