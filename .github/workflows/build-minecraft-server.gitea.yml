@@ -5,7 +5,7 @@ on:
         branches: ["main", "master"]
         paths:
             - "@minecraft-server/**"
-            - ".github/workflows/build-minecraft-server.yml"
+            - ".github/workflows/build-minecraft-server.gitea.yml"
     workflow_dispatch:
 
 env:
